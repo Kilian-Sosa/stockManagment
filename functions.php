@@ -66,4 +66,17 @@
             echo "<option value='" . $object -> cod . "'>" . $object -> nombre . "</option>";
         echo "</select>";
     }    
+
+    function insertProduct($name, $initials, $description, $retail, $type){
+        $connection = connectToDB();
+        $sentence = $connection -> prepare("INSERT INTO productos(nombre, nombre_corto, descripcion, pvp, familia) VALUES (?, ?, ?, ?, ?);");
+        return $sentence -> execute([$name, $initials, $description, $retail, $type]);
+    }
+
+    function checkIfInsertWorked($name, $initials, $description, $retail, $type){
+        if(insertProduct($name, $initials, $description, $retail, $type))
+            header('Location:index.php?action=insert&w=true');
+        else
+            header('Location:index.php?action=insert&w=false'); 
+    }
 ?>

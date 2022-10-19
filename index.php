@@ -8,8 +8,20 @@
     </head>
     <body class="text-center">
         <div class="container">
+            <br>
+            <?php 
+                if(isset($_GET["action"])){
+                    if($_GET["action"] == "insert"){
+                        if($_GET["w"] == "true"){?>
+                            <div class="alert alert-success" role="alert">Se ha añadido el producto correctamente</div>
+                  <?php }else{?>
+                            <div class="alert alert-danger" role="alert">Ha habido un problema al añadir el producto</div>
+                  <?php }
+                    }
+                }
+            ?>
             <!-- Header -->
-            <br><br>
+            <br>
             <div class="row">
                 <div class="col-12">
                     <h1>Gestión de Productos</h1>
