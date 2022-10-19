@@ -12,12 +12,16 @@
         }
     }
     
-    function readDB(){
+    function readProductsFromDB(){
         return connectToDB() -> query('SELECT * from productos');
     }
+    
+    function readTypesFromDB(){
+        return connectToDB() -> query('SELECT * from familias');
+    }
 
-    function showRecords(){   
-        $records = readDB(); 
+    function showProducts(){   
+        $records = readProductsFromDB(); 
         while($object = $records -> fetch(PDO::FETCH_OBJ))
             echo "<tr>
                     <td>
@@ -52,5 +56,14 @@
                         </div>
                     </td>
                 </tr>";
+    }    
+    
+    function showTypesSelect(){   
+        $records = readTypesFromDB();
+        echo "<select name='type' required>
+                  <option value=''>--Selecciona--</option>";
+        while($object = $records -> fetch(PDO::FETCH_OBJ))
+            echo "<option value='" . $object -> cod . "'>" . $object -> nombre . "</option>";
+        echo "</select>";
     }    
 ?>
