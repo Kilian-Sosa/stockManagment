@@ -37,7 +37,7 @@
                           <textarea class="form-control" name="description" min="0" rows="6"></textarea>
                         </div>
                         <div class="mb-3">
-                          <label for="retail" class="form-label">Precio de Venta al Público</label>
+                          <label for="retail" class="form-label">Precio de Venta al Público (€)</label>
                           <input type="number" class="form-control" name="retail" min="0" required>
                         </div>
                         <div class="mb-3">

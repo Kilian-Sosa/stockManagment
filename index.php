@@ -17,11 +17,15 @@
                   <?php }else{?>
                             <div class="alert alert-danger" role="alert">Ha habido un problema al añadir el producto</div>
                   <?php }
+                    }elseif($_GET["action"] == "edit"){
+
+                    }else{
+                        if(!isset($_GET["w"]))
+                            checkIfDelWorked($_GET["id"]);
                     }
                 }
             ?>
             <!-- Header -->
-            <br>
             <div class="row">
                 <div class="col-12">
                     <h1>Gestión de Productos</h1>
