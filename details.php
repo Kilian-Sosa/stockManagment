@@ -37,10 +37,10 @@
                     <form method="POST" action="form.php">
                         <input name="action" type="hidden" value="edit">
                         <input name='id' type='hidden' value='<?php echo $_POST["id"]?>?>'>
-                        <input name='name' type='hidden' value='<?php echo $_POST["initials"]?>'>
-                        <input name='initials' type='hidden' value='<?php echo $object -> nombre_corto ?>'>
+                        <input name='name' type='hidden' value='<?php echo $_POST["name"]?>'>
+                        <input name='initials' type='hidden' value='<?php echo $_POST["initials"] ?>'>
                         <input name='description' type='hidden' value='<?php echo $_POST["description"]?>'>
-                        <input name='retail' type='hidden' value='<?php echo $object -> pvp ?>'>
+                        <input name='retail' type='hidden' value='<?php echo $_POST["retail"] ?>'>
                         <input name='type' type='hidden' value='<?php echo $_POST["type"]?>'>
                         <div class="d-grid gap-2">
                             <button class="btn btn-warning" type="submit">Editar</button>

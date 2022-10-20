@@ -18,8 +18,12 @@
                             <div class="alert alert-danger" role="alert">Ha habido un problema al añadir el producto</div>
                   <?php }
                     }elseif($_GET["action"] == "edit"){
-
-                    }else{
+                        if(!isset($_GET["w"])){?>
+                            <div class="alert alert-success" role="alert">Se ha editado el producto correctamente</div>
+                  <?php }else{?>
+                                <div class="alert alert-danger" role="alert">Ha habido un problema al editar el producto</div>
+                  <?php }
+                    }elseif($_GET["action"] == "delete"){
                         if(!isset($_GET["w"]))
                             checkIfDelWorked($_GET["id"]);
                     }
