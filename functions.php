@@ -19,6 +19,12 @@
     function readTypesFromDB(){
         return connectToDB() -> query('SELECT * from familias ORDER BY nombre ASC');
     }
+    
+    function readATypeFromDB($type){
+        $sentence = connectToDB() -> prepare("SELECT * from familias WHERE cod = ?");
+        $sentence -> execute([$type]);
+        return $sentence;
+    }
 
     function showProducts(){   
         $records = readProductsFromDB(); 
@@ -71,7 +77,18 @@
         while($object = $records -> fetch(PDO::FETCH_OBJ))
             echo "<option value='" . $object -> cod . "'>" . $object -> nombre . "</option>";
         echo "</select>";
-    }    
+    } 
+    
+    function showATypeSelect($type){   
+        $records = readATypeFromDB($type);
+        $object = $records -> fetch(PDO::FETCH_OBJ);
+        $records = readTypesFromDB();
+        echo "<select name='type' required>
+                  <option selected value='$type'>" . $object -> nombre . "</option>";
+        while($object = $records -> fetch(PDO::FETCH_OBJ))
+            if($object -> cod != $type) echo "<option value='" . $object -> cod . "'>" . $object -> nombre . "</option>";
+        echo "</select>";
+    }     
 
     function insertProduct($name, $initials, $description, $retail, $type){
         $sentence = connectToDB() -> prepare("INSERT INTO productos(nombre, nombre_corto, descripcion, pvp, familia) VALUES (?, ?, ?, ?, ?);");
@@ -96,7 +113,7 @@
     }
 
     function checkIfUpdateWorked($id, $name, $initials, $description, $retail, $type){
-        if(!updateProduct($id, $name, $initials, $description, $retail, $type))
+        if(updateProduct($id, $name, $initials, $description, $retail, $type))
             header('Location:index.php?action=edit&w=true');
         else
             header('Location:index.php?action=edit&w=false'); 
