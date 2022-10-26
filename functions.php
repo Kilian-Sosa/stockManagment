@@ -64,8 +64,7 @@
                     <td>
                         <!-- Button Stock -->
                         <form method='POST' action='stockForm.php'>
-                            <input name='action' type='hidden' value='edit'>
-                            <input name='id' type='hidden' value='" . $object -> id . "'>
+                            <input name='idProduct' type='hidden' value='" . $object -> id . "'>
                             <input name='name' type='hidden' value='" . $object -> nombre . "'>
                             <input class='btn btn-secondary' type='submit' value='Mover Stock'>
                         </form> 
@@ -103,13 +102,14 @@
                         <td>" . $object -> nombre . "</td>
                         <td>" . $object -> unidades . " unidades</td>";
             echo "<td>"; showShopsSelect($object -> id); echo "</td>";
-            echo "<td><input type='number' class='form-control' name='units' min='1' max='" . $object -> unidades . "' required></td>
+            echo "<td><input type='number' class='form-control form-control' name='unitsToMove' value='1' min='1' max='" . $object -> unidades . "'></td>
                         <td></td>
                         <td>
                             <div style='display: flex'>
-                                <input name='idS' type='hidden' value='" . $object -> id . "'>
-                                <input name='idP' type='hidden' value='" . $object -> producto . "'>
-                                <input name='unitsB' type='hidden' value='" . $object -> unidades . "'>
+                                <input name='idShop1' type='hidden' value='" . $object -> id . "'>
+                                <input name='idProduct' type='hidden' value='" . $object -> producto . "'>
+                                <input name='currentUnits' type='hidden' value='" . $object -> unidades . "'>
+                                <input name='name' type='hidden' value='" . $_POST["name"] . "'>
                                 <input class='btn btn-warning' type='submit' value='Mover Stock'>
                             </div>
                         </td>
@@ -129,7 +129,7 @@
     
     function showShopsSelect($id){   
         $records = readShopsFromDB();
-        echo "<select name='shop' required>";
+        echo "<select class='form-select form-select' aria-label='.form-select-lg example' name='idShop2' required>";
         while($object = $records -> fetch(PDO::FETCH_OBJ))
             if($object -> id != $id) echo "<option value='" . $object -> id . "'>" . $object -> nombre . "</option>";
         echo "</select>";
@@ -152,15 +152,51 @@
     }
 
     function updateProduct($id, $name, $initials, $description, $retail, $type){
-        return checkIDFromDB($id);
         $sentence = connectToDB() -> prepare("UPDATE productos SET nombre = ?, nombre_corto = ?, descripcion = ?, pvp = ?, familia = ? WHERE id = ?;");
         return $sentence -> execute([$name, $initials, $description, $retail, $type, $id]);
     }
 
     function deleteProduct($id){
-        return checkIDFromDB($id);
         $sentence = connectToDB() -> prepare("DELETE FROM productos WHERE id = ?;");
         return $sentence -> execute([$id]);
+    }
+
+    function getCurrentUnits($idProduct, $idShop){
+        $sentence = connectToDB() -> prepare("SELECT unidades FROM stocks WHERE producto = ? and tienda = ?;");
+        $sentence -> execute([$idProduct, $idShop]);
+        if($sentence -> rowCount() > 0) return $sentence -> fetch();
+        return 0;
+    }
+
+    function insertStock($connection, $idProduct, $idShop, $units){
+        $sentence = $connection -> prepare("INSERT INTO stocks(producto, tienda, unidades) VALUES (?, ?, ?);");
+        $sentence -> execute([$idProduct, $idShop, $units]);
+    }
+
+    function updateStock($connection, $idProduct, $idShop, $units){
+        $sentence = $connection -> prepare("UPDATE stocks SET unidades = ? WHERE producto = ? and tienda = ?;");
+        $sentence -> execute([$units, $idProduct, $idShop]);
+    }
+
+    function deleteStock($connection, $idProduct, $idShop){
+        $sentence = $connection -> prepare("DELETE FROM stocks WHERE producto = ? and tienda = ?;");
+        $sentence -> execute([$idProduct, $idShop]);
+    }
+
+    function moveStock($idShop1, $idShop2, $idProduct, $currentUnits, $unitsToMove){
+        try{
+            $connection = connectToDB();
+            $connection -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $connection -> beginTransaction();
+            $currentUnits == $unitsToMove ? deleteStock($connection, $idProduct, $idShop1) : updateStock($connection, $idProduct, $idShop1, ($currentUnits - $unitsToMove));
+            $unitsInShop2 = getCurrentUnits($idProduct, $idShop2);
+            $unitsInShop2 == 0 ? insertStock($connection, $idProduct, $idShop2, $unitsToMove): updateStock($connection, $idProduct, $idShop2, ($unitsInShop2[0] + $unitsToMove));
+            $connection -> commit();
+        }catch(Exception $e){
+            $connection -> rollBack();?>
+            <div class="alert alert-danger" role="alert"><?php echo "Hubo un error durante la transacción -> " . $e -> getMessage();?></div>
+  <?php }
+
     }
 
     function checkIfInsertWorked($name, $initials, $description, $retail, $type){
@@ -171,17 +207,23 @@
     }
 
     function checkIfUpdateWorked($id, $name, $initials, $description, $retail, $type){
-        if(updateProduct($id, $name, $initials, $description, $retail, $type))
+        if(!checkIDFromDB($id) || updateProduct($id, $name, $initials, $description, $retail, $type))
             header('Location:index.php?action=edit&w=true');
         else
             header('Location:index.php?action=edit&w=false'); 
     }
 
     function checkIfDelWorked($id){
-        if(deleteProduct($id)){?>
+        if(!checkIDFromDB($id) || deleteProduct($id)){?>
             <div class="alert alert-success" role="alert">Se ha eliminado el producto correctamente</div>
   <?php }else{?>
             <div class="alert alert-danger" role="alert">Ha habido un problema al eliminar el producto</div>
+  <?php }
+    }
+
+    function checkIfMoveWorked($idShop1, $idShop2, $idProduct, $currentUnits, $unitsToMove){
+        if(!checkIDFromDB($idProduct) || moveStock($idShop1, $idShop2, $idProduct, $currentUnits, $unitsToMove)){?>
+            <div class="alert alert-success" role="alert">Se ha movido el stock correctamente</div>
   <?php }
     }
 ?>

@@ -7,31 +7,31 @@
         <?php include 'functions.php';?>
     </head>
     <body>
-        <div class="container">
-            <?php
-                $name = "";
-                $id = "";
-                $initials = "";
-                $description = "";
-                $retail = "";
-                $type = "";
+        <?php
+            $name = "";
+            $id = "";
+            $initials = "";
+            $description = "";
+            $retail = "";
+            $type = "";
 
-                if(isset($_POST["action"])){ 
-                    if(isset($_POST["name"])){
-                        $name = $_POST["name"];
-                        $id = $_POST["id"];
-                        $initials = $_POST["initials"];
-                        $description = $_POST["description"];
-                        $retail = $_POST["retail"];
-                        $type = $_POST["type"];
-                        if($_POST["action"] == "insert")
-                            checkIfInsertWorked($name, $initials, $description, $retail, $type);
-                        elseif($_POST["action"] == "edit" && isset($_POST["f"]))
-                            checkIfUpdateWorked($id, $name, $initials, $description, $retail, $type); 
-                    }    
-                }else{
-                    header('Location:index.php');
-                }?>   
+            if(isset($_POST["action"])){ 
+                if(isset($_POST["name"])){
+                    $name = $_POST["name"];
+                    $id = $_POST["id"];
+                    $initials = $_POST["initials"];
+                    $description = $_POST["description"];
+                    $retail = $_POST["retail"];
+                    $type = $_POST["type"];
+                    if($_POST["action"] == "insert")
+                        checkIfInsertWorked($name, $initials, $description, $retail, $type);
+                    elseif($_POST["action"] == "edit" && isset($_POST["f"]))
+                        checkIfUpdateWorked($id, $name, $initials, $description, $retail, $type); 
+                }    
+            }else{
+                header('Location:index.php');
+            }?>   
+        <div class="container">
             <br>
             <div class="row">
                 <div class="col-3"></div>

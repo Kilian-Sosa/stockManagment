@@ -25,7 +25,7 @@
                   <?php }
                     }elseif($_GET["action"] == "delete"){
                         if(!isset($_GET["w"]))
-                            checkIfDelWorked($_GET["id"]);
+                            checkIfDelWorked($_GET["id"]); 
                     }
                 }
             ?>
