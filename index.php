@@ -39,7 +39,7 @@
             <!-- Button Insert -->
             <div class="row" style="margin-bottom: 15px;">
                 <div class="col-12">
-                    <form method="POST" action="form.php">
+                    <form method="POST" action="productForm.php">
                         <input name="action" type="hidden" value="insert">
                         <div class="d-grid gap-2">
                             <button class="btn btn-success" type="submit">Insertar</button>

@@ -32,18 +32,23 @@
                 }else{
                     header('Location:index.php');
                 }?>   
+            <br>
             <div class="row">
                 <div class="col-3"></div>
                 <div class="col-6">
-                    <br>
                     <?php if($_POST["action"] == "insert")
                             echo '<h1 class="text-center">Insertar Producto</h1>';
                         elseif($_POST["action"] == "edit")
                             echo '<h1 class="text-center">Actualizar Producto</h1>';
-                    ?>        
-                    <br>
+                    ?>   
+                </div>
+                <div class="col-3"></div>
+            </div>             
+            <br>
                     
-                    <!-- Form -->
+            <!-- Form -->
+            <div class="row">
+                <div class="col-12">
                     <form method="POST" action="form.php">
                         <div class="mb-3">
                             <label for="name" class="form-label">Nombre del Producto</label>
