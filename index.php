@@ -54,15 +54,20 @@
                     <table class="table table-striped table-dark">
                         <thead>
                             <tr>
-                                <th scope="col">Detalles</th>
-                                <th scope="col">Familia</th>
-                                <th scope="col">Nombre</th>
+                                <th scope="col">Detalles</a></th>
+                                <?php if(!isset($_GET["order"]) || $_GET["order"] == "ASC"){?>
+                                        <th scope="col">▼ <a href="index.php?field=familia&order=DESC">Familia</a></th>
+                                        <th scope="col">▼ <a href="index.php?field=nombre&order=DESC">Nombre</a></th>
+                                <?php }else{?>    
+                                        <th scope="col">▲ <a href="index.php?field=familia&order=ASC">Familia</a></th>
+                                        <th scope="col">▲ <a href="index.php?field=nombre&order=ASC">Nombre</a></th>
+                                <?php }?>    
                                 <th scope="col"></th>
                                 <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php showProducts(); ?>
+                            <?php isset($_GET["order"]) ? showProducts($_GET["field"], $_GET["order"]) : showProducts(null, null); ?>
                         </tbody>
                     </table>
                 </div>

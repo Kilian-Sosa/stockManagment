@@ -16,10 +16,12 @@
         }
     }
     
-    function readProductsFromDB(){
+    function readProductsFromDB($field, $order){
         try{
             global $connection;
-            return $connection -> query('SELECT * from productos ORDER BY nombre ASC');
+            if($order != null){ 
+                return $connection -> query('SELECT * from productos ORDER BY ' . $field . ' ' . $order);
+             }else return $connection -> query('SELECT * from productos ORDER BY nombre ASC');
         }catch(Exception $e){return false;}
     }
     
@@ -64,8 +66,8 @@
         }catch(Exception $e){return false;}
     }
 
-    function showProducts(){   
-        $records = readProductsFromDB(); 
+    function showProducts($field, $order){   
+        $records = readProductsFromDB($field, $order); 
         while($object = $records -> fetch(PDO::FETCH_OBJ))
             echo "<tr>
                     <td>
