@@ -10,6 +10,7 @@
         <div class="container">
             <br>
             <?php 
+                if(session_status() !== PHP_SESSION_NONE) unset($_SESSION['done']);
                 if(isset($_GET["action"])){
                     if($_GET["action"] == "insert"){
                         if($_GET["w"] == "true"){?>
@@ -25,7 +26,7 @@
                   <?php }
                     }elseif($_GET["action"] == "delete"){
                         if(!isset($_GET["w"]))
-                            checkIfDelWorked($_GET["id"]); 
+                            deleteProduct($_GET["id"]); 
                     }
                 }
             ?>

@@ -1,4 +1,7 @@
 <?php
+    $connection = connectToDB();
+    $connection -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     function connectToDB(){
         $HOST = "localhost";
         $DATABASE = "proyecto";
@@ -7,39 +10,58 @@
         $DSN = "mysql:host=$HOST;dbname=$DATABASE";
         try{
             return new PDO($DSN, $USER, $PASSWORD);
-        }catch(Exception $e){
-            die("Error: " . $e -> getMessage());
+        }catch(Exception $e){?>
+            <div class="alert alert-danger" role="alert"><?php echo "Error conectando a la base de datos -> " . $e -> getMessage();?></div>
+            <?php die();
         }
     }
     
     function readProductsFromDB(){
-        return connectToDB() -> query('SELECT * from productos ORDER BY nombre ASC');
+        try{
+            global $connection;
+            return $connection -> query('SELECT * from productos ORDER BY nombre ASC');
+        }catch(Exception $e){return false;}
     }
     
     function readTypesFromDB(){
-        return connectToDB() -> query('SELECT * from familias ORDER BY nombre ASC');
+        try{
+            global $connection;
+            return $connection -> query('SELECT * from familias ORDER BY nombre ASC');
+        }catch(Exception $e){return false;}
     }
     
     function readATypeFromDB($type){
-        $sentence = connectToDB() -> prepare("SELECT * from familias WHERE cod = ?");
-        $sentence -> execute([$type]);
-        return $sentence;
+        try{
+            global $connection;
+            $sentence = $connection -> prepare("SELECT * from familias WHERE cod = ?");
+            $sentence -> execute([$type]);
+            return $sentence;
+        }catch(Exception $e){return false;}
     }
     
     function readStockFromDB($id){
-        $sentence = connectToDB() -> prepare("SELECT * from stocks, tiendas WHERE stocks.tienda = tiendas.id and producto = ? ORDER BY nombre ASC");
-        $sentence -> execute([$id]);
-        return $sentence;
+        try{
+            global $connection;
+            $sentence = $connection -> prepare("SELECT * from stocks, tiendas WHERE stocks.tienda = tiendas.id and producto = ? ORDER BY nombre ASC");
+            $sentence -> execute([$id]);
+            return $sentence;
+        }catch(Exception $e){return false;}
     }
     
     function readShopsFromDB(){
-        return connectToDB() -> query("SELECT * from tiendas ORDER BY nombre ASC");
+        try{
+            global $connection;
+            return $connection -> query("SELECT * from tiendas ORDER BY nombre ASC");
+        }catch(Exception $e){return false;}
     }
     
     function checkIDFromDB($id){
-        $sentence = connectToDB() -> prepare("SELECT * from productos WHERE id = ?");
-        $sentence -> execute([$id]);
-        return $sentence -> rowCount() > 0;
+        try{
+            global $connection;
+            $sentence = $connection -> prepare("SELECT * from productos WHERE id = ?");
+            $sentence -> execute([$id]);
+            if($sentence -> rowCount() == 0)?> <div class="alert alert-danger" role="alert">No se ha encontrado el ID</div><?php ;
+        }catch(Exception $e){return false;}
     }
 
     function showProducts(){   
@@ -147,83 +169,75 @@
     }          
 
     function insertProduct($name, $initials, $description, $retail, $type){
-        $sentence = connectToDB() -> prepare("INSERT INTO productos(nombre, nombre_corto, descripcion, pvp, familia) VALUES (?, ?, ?, ?, ?);");
-        return $sentence -> execute([$name, $initials, $description, $retail, $type]);
+        try{
+            global $connection;
+            $sentence = $connection -> prepare("INSERT INTO productos(nombre, nombre_corto, descripcion, pvp, familia) VALUES (?, ?, ?, ?, ?);");
+            return $sentence -> execute([$name, $initials, $description, $retail, $type]);
+        }catch(Exception $e){return false;}
     }
 
     function updateProduct($id, $name, $initials, $description, $retail, $type){
-        $sentence = connectToDB() -> prepare("UPDATE productos SET nombre = ?, nombre_corto = ?, descripcion = ?, pvp = ?, familia = ? WHERE id = ?;");
-        return $sentence -> execute([$name, $initials, $description, $retail, $type, $id]);
+        if(!checkIDFromDB($id)) return;
+        try{
+            global $connection;
+            $sentence = $connection -> prepare("UPDATE productos SET nombre = ?, nombre_corto = ?, descripcion = ?, pvp = ?, familia = ? WHERE id = ?;");
+            return $sentence -> execute([$name, $initials, $description, $retail, $type, $id]);
+        }catch(Exception $e){return false;}
     }
 
     function deleteProduct($id){
-        $sentence = connectToDB() -> prepare("DELETE FROM productos WHERE id = ?;");
-        return $sentence -> execute([$id]);
+        if(!checkIDFromDB($id)) return;
+        try{
+            global $connection;
+            $sentence = $connection -> prepare("DELETE FROM productos WHERE id = ?;");
+            $sentence -> execute([$id]);?>
+
+            <div class="alert alert-success" role="alert">Se ha eliminado el producto correctamente</div>
+    <?php }catch(Exception $e){?>
+            <div class="alert alert-danger" role="alert"><?php echo "Ha habido un problema al eliminar el producto -> " . $e -> getMessage();?></div>
+    <?php }
     }
 
     function getCurrentUnits($idProduct, $idShop){
-        $sentence = connectToDB() -> prepare("SELECT unidades FROM stocks WHERE producto = ? and tienda = ?;");
+        global $connection;
+        $sentence = $connection -> prepare("SELECT unidades FROM stocks WHERE producto = ? and tienda = ?;");
         $sentence -> execute([$idProduct, $idShop]);
         if($sentence -> rowCount() > 0) return $sentence -> fetch();
         return 0;
     }
 
-    function insertStock($connection, $idProduct, $idShop, $units){
+    function insertStock($idProduct, $idShop, $units){
+        global $connection;
         $sentence = $connection -> prepare("INSERT INTO stocks(producto, tienda, unidades) VALUES (?, ?, ?);");
         $sentence -> execute([$idProduct, $idShop, $units]);
     }
 
-    function updateStock($connection, $idProduct, $idShop, $units){
+    function updateStock($idProduct, $idShop, $units){
+        global $connection;
         $sentence = $connection -> prepare("UPDATE stocks SET unidades = ? WHERE producto = ? and tienda = ?;");
         $sentence -> execute([$units, $idProduct, $idShop]);
     }
 
-    function deleteStock($connection, $idProduct, $idShop){
+    function deleteStock($idProduct, $idShop){
+        global $connection;
         $sentence = $connection -> prepare("DELETE FROM stocks WHERE producto = ? and tienda = ?;");
         $sentence -> execute([$idProduct, $idShop]);
     }
 
     function moveStock($idShop1, $idShop2, $idProduct, $currentUnits, $unitsToMove){
+        if(!checkIDFromDB($idProduct)) return;
         try{
-            $connection = connectToDB();
-            $connection -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            global $connection;
             $connection -> beginTransaction();
             $currentUnits == $unitsToMove ? deleteStock($connection, $idProduct, $idShop1) : updateStock($connection, $idProduct, $idShop1, ($currentUnits - $unitsToMove));
             $unitsInShop2 = getCurrentUnits($idProduct, $idShop2);
             $unitsInShop2 == 0 ? insertStock($connection, $idProduct, $idShop2, $unitsToMove): updateStock($connection, $idProduct, $idShop2, ($unitsInShop2[0] + $unitsToMove));
-            $connection -> commit();
-        }catch(Exception $e){
+            $connection -> commit();?>
+
+            <div class="alert alert-success" role="alert">Se ha movido el stock correctamente</div>
+  <?php }catch(Exception $e){
             $connection -> rollBack();?>
             <div class="alert alert-danger" role="alert"><?php echo "Hubo un error durante la transacción -> " . $e -> getMessage();?></div>
-  <?php }
-
-    }
-
-    function checkIfInsertWorked($name, $initials, $description, $retail, $type){
-        if(insertProduct($name, $initials, $description, $retail, $type))
-            header('Location:index.php?action=insert&w=true');
-        else
-            header('Location:index.php?action=insert&w=false'); 
-    }
-
-    function checkIfUpdateWorked($id, $name, $initials, $description, $retail, $type){
-        if(!checkIDFromDB($id) || updateProduct($id, $name, $initials, $description, $retail, $type))
-            header('Location:index.php?action=edit&w=true');
-        else
-            header('Location:index.php?action=edit&w=false'); 
-    }
-
-    function checkIfDelWorked($id){
-        if(!checkIDFromDB($id) || deleteProduct($id)){?>
-            <div class="alert alert-success" role="alert">Se ha eliminado el producto correctamente</div>
-  <?php }else{?>
-            <div class="alert alert-danger" role="alert">Ha habido un problema al eliminar el producto</div>
-  <?php }
-    }
-
-    function checkIfMoveWorked($idShop1, $idShop2, $idProduct, $currentUnits, $unitsToMove){
-        if(!checkIDFromDB($idProduct) || moveStock($idShop1, $idShop2, $idProduct, $currentUnits, $unitsToMove)){?>
-            <div class="alert alert-success" role="alert">Se ha movido el stock correctamente</div>
   <?php }
     }
 ?>
