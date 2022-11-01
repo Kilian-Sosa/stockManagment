@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
         <title>Gestión de Productos</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
         <?php include 'functions.php';?>
     </head>
     <body>
@@ -16,7 +16,7 @@
             $type = "";
 
             if(isset($_POST["action"])){ 
-                if(isset($_POST["name"])){
+                if(isset($_POST["name"])  && !isset($_SESSION['done'])){
                     $name = $_POST["name"];
                     $id = $_POST["id"];
                     $initials = $_POST["initials"];
@@ -24,9 +24,12 @@
                     $retail = $_POST["retail"];
                     $type = $_POST["type"];
                     if($_POST["action"] == "insert")
-                        checkIfInsertWorked($name, $initials, $description, $retail, $type);
+                        insertProduct($name, $initials, $description, $retail, $type) ? header('Location:index.php?action=insert&w=true') : header('Location:index.php?action=insert&w=false');
                     elseif($_POST["action"] == "edit" && isset($_POST["f"]))
-                        checkIfUpdateWorked($id, $name, $initials, $description, $retail, $type); 
+                        updateProduct($id, $name, $initials, $description, $retail, $type) ? header('Location:index.php?action=edit&w=true') : header('Location:index.php?action=edit&w=false'); 
+
+                    session_start();
+                    $_SESSION['done'] = "true"; 
                 }    
             }else{
                 header('Location:index.php');

@@ -16,12 +16,10 @@
         }
     }
     
-    function readProductsFromDB($field, $order){
+    function readProductsFromDB(){
         try{
             global $connection;
-            if($order != null){ 
-                return $connection -> query('SELECT * from productos ORDER BY ' . $field . ' ' . $order);
-             }else return $connection -> query('SELECT * from productos ORDER BY nombre ASC');
+            return $connection -> query('SELECT * from productos ORDER BY nombre ASC');
         }catch(Exception $e){return false;}
     }
     
@@ -66,8 +64,8 @@
         }catch(Exception $e){return false;}
     }
 
-    function showProducts($field, $order){   
-        $records = readProductsFromDB($field, $order); 
+    function showProducts(){   
+        $records = readProductsFromDB(); 
         while($object = $records -> fetch(PDO::FETCH_OBJ))
             echo "<tr>
                     <td>
@@ -241,5 +239,16 @@
             $connection -> rollBack();?>
             <div class="alert alert-danger" role="alert"><?php echo "Hubo un error durante la transacción -> " . $e -> getMessage();?></div>
   <?php }
+    }
+
+    function showProductsPerPageSelect(){
+        $records = readTypesFromDB();
+        $size = $records -> rowCount();
+        echo "<select name='type' required>
+                  <option value='5'>Mostrar 5 registros por página</option>";
+        for($i = 5; $i < $size; $i += 5)
+            echo "<option value='" . $i . "'>Mostrar " . $i ." registros por página</option>";
+        echo "<option value='" . $size . "'>Mostrar todos los registros en una página (" . $size . ")</option>"; 
+        echo "</select>";
     }
 ?>
