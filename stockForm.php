@@ -17,7 +17,6 @@
                 $_SESSION['done'] = "true";
             }?>  
         <div class="container">   
-            <?php echo $_POST["name"] ?>
             <div class="row">
                 <div class="col-2"></div>
                 <div class="col-8">
