@@ -3,10 +3,11 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
         <title>Gestión de Stock</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
         <?php 
-            include 'functions.php';
+            include 'scripts/functions.php';
             if(!isset($_POST["idProduct"])) header('Location:index.php');
+            session_start(); if(!isset($_SESSION["validated"])) header("Location: index.php");
         ?>
     </head>
     <body>

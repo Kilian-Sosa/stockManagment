@@ -3,8 +3,9 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
         <title>Gestión de Productos</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
-        <?php include 'functions.php';?>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+        <?php include 'scripts/functions.php';
+            session_start(); if(!isset($_SESSION["validated"])) header("Location: index.php");?>
     </head>
     <body>
         <?php
