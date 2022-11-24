@@ -8,8 +8,8 @@
                 setLogInCookies(array($_POST['user'], $_POST['pass']));
                 header("Location: " . parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) . "?error=true");
             }else{
-                successfulAccess($result -> fetch(PDO::FETCH_OBJ));
                 $_SESSION["validated"] = $_POST['user'];
+                successfulAccess($result -> fetch(PDO::FETCH_OBJ));
                 header("Location: " . parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH));
             }    
         }    

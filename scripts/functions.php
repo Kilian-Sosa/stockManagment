@@ -271,4 +271,19 @@
         setcookie("successfulAccess", date("d/m H:i"), strtotime("+1 year"));
 
     }
+
+    function readUserNameFromDB(){
+        try{
+            global $connection;
+            return $connection -> query("SELECT nombrecompleto FROM usuarios WHERE usuario = '" . $_SESSION['validated'] . "';") -> fetch(PDO::FETCH_OBJ) -> nombrecompleto;
+        }catch(Exception $e){return false;}
+    }
+
+    function updateUser($name, $backgroundColor, $font){
+        try{
+            global $connection;
+            $sentence = $connection -> prepare("UPDATE usuarios SET nombrecompleto = ?, colorfondo = ?, tipoletra = ? WHERE usuario = ?;");
+            $sentence -> execute([$name, $backgroundColor, $font, $_SESSION['validated']]);
+        }catch(Exception $e){return false;}
+    }
 ?>
