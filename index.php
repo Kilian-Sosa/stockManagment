@@ -9,10 +9,14 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <?php include 'scripts/functions.php'; ?>
     </head>
-    <body>
+<?php session_start(); 
+    if(isset($_SESSION["validated"])){?>
+    <body style="background-color: <?php echo $_SESSION["backgroundColor"];?>; font-family: <?php echo $_SESSION["font"];?>;">
+<?php }else{?>
+    <body style="background-color: <?php echo "#EFF5F5"; ?>; font-family: <?php echo "Arial";?>;">
+<?php }?>
         <div class="container">
             <?php 
-                session_start(); 
                 if(isset($_GET["endSession"])){ 
                     session_destroy(); 
                     header("Location: " . parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH));
@@ -22,14 +26,7 @@
                 if(!empty($_COOKIE["saveState"])) $_SESSION["validated"] = $_COOKIE["saveState"];
                 else include 'scripts/login.php'; 
 
-                if(isset($_SESSION["validated"])){?>
-                    <form method="POST" action="index.php?endSession=true">
-                        <div class="d-grid gap-2">
-                            <button class="btn btn-secondary" type="submit">Cerrar Sesión</button>
-                        </div>
-                    </form>
-                    <?php
-                    if(session_status() !== PHP_SESSION_NONE) unset($_SESSION['done']);
+                if(isset($_SESSION["validated"])){
                     if(isset($_GET["action"])){
                         if($_GET["action"] == "insert"){
                             if($_GET["w"] == "true"){?>
@@ -47,8 +44,24 @@
                             if(!isset($_GET["w"])) deleteProduct($_GET["id"]); 
                     }
                 ?>
+
+                <div class="d-flex justify-content-between align-items-center p-3">
+                    <!-- Log Out -->
+                    <div class="d-flex align-items-center">
+                        <a href="index.php?endSession" class="mx-2 btn btn-sm btn-danger"><i class="bi bi-power"></i></a>
+                        <p class="m-0">Cerrar Sesión</p>
+                    </div>
+                    <!-- Access to the Perfil Conf -->
+                    <div class="d-flex align-items-center">
+                        <p class="m-0 font-monospace"><b><?php echo $_SESSION["validated"]?></b></p>
+                        <form method="POST" action="profile.php">
+                            <input type="hidden" name="page" value="<?php basename($_SERVER['REQUEST_URI']);?>">
+                            <button type="submit" class="mx-2 btn btn-sm btn-secondary"><i class='bi bi-gear-fill'></i></button>
+                        </form>
+                    </div>
+                </div>
                 <!-- Header -->
-                <br><div class="row">
+                <div class="row">
                     <div class="col-12">
                         <h1 style="text-align: center;">Gestión de Productos</h1>
                     </div>

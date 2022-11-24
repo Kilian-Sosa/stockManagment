@@ -2,21 +2,25 @@
     <?php 
         if(isset($_POST['user'])){
             global $connection;
-            $result = $connection -> query("SELECT usuario from usuarios WHERE usuario='" . $_POST['user'] . "' AND clave='" . hash('sha256', $_POST['pass']) . "'");
+            $result = $connection -> query("SELECT colorfondo, tipoletra from usuarios WHERE usuario='" . $_POST['user'] . "' AND clave='" . hash('sha256', $_POST['pass']) . "'");
                 
-            if($result -> rowCount() == 0) header("Location: " . parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) . "?error=true");
-
-            $_SESSION["validated"] = $_POST['user'];
-            if(isset($_POST["saveState"])) 
-                setcookie("saveState", $_POST['user'], strtotime("+1 year"));
+            if($result -> rowCount() == 0){
+                setLogInCookies(array($_POST['user'], $_POST['pass']));
+                header("Location: " . parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) . "?error=true");
+            }else{
+                successfulAccess($result -> fetch(PDO::FETCH_OBJ));
+                $_SESSION["validated"] = $_POST['user'];
+                header("Location: " . parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH));
+            }    
         }    
 
         if(!isset($_SESSION["validated"])){
             if(isset($_GET['error'])){?>
                 <div class="alert alert-danger" role="alert">Usuario o Contraseña incorrecta</div><?php
             }
-            echo "<br><h1>Inicie Sesión para acceder al contenido</h1><br><br>";
-            echo "<form method='POST' action='" . parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) . "'>"?>
+            echo "<br><h1>Inicie Sesión para acceder al contenido</h1>";
+            if(isset($_COOKIE["successfulAccess"])) echo "Último acceso en este dispositivo: " . $_COOKIE["successfulAccess"];
+            echo "<br><br><form method='POST' action='" . parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) . "'>"?>
                 <div class="col-6 mx-auto">
                     <p class="m-0 fs-5">Usuario</p>
                     <div class="input-group mb-3">

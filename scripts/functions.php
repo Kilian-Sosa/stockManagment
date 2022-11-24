@@ -251,4 +251,24 @@
         echo "<option value='" . $size . "'>Mostrar todos los registros en una página (" . $size . ")</option>"; 
         echo "</select>";
     }
+
+    function setLogInCookies($array){
+        isset($_COOKIE["errorCount"]) ? 
+                setcookie("errorCount", $_COOKIE["errorCount"]++, strtotime("+1 year")):
+                setcookie("errorCount", 1, strtotime("+1 year"));
+        isset($_COOKIE["wrongAccess"]) ? 
+                setcookie("wrongAccess", $_COOKIE["wrongAccess"] . $array[0] . " - " . $array[1] . ", ", strtotime("+1 year")):
+                setcookie("wrongAccess", $array[0] . " - " . $array[1] . ", ", strtotime("+1 year"));
+    }
+
+    function successfulAccess($record){
+        $_SESSION["validated"] = $_POST['user'];
+        $_SESSION["backgroundColor"] = $record -> colorfondo;
+        $_SESSION["font"] = $record -> tipoletra;
+        if(isset($_POST["saveState"])) setcookie("saveState", $_POST['user'], strtotime("+1 year"));
+
+        date_default_timezone_set('Europe/London');
+        setcookie("successfulAccess", date("d/m H:i"), strtotime("+1 year"));
+
+    }
 ?>
