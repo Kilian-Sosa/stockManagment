@@ -18,8 +18,10 @@
             if(!isset($_SESSION["validated"])) include 'scripts/login.php';
             else{
                 if(!isset($_POST["idProduct"])) header('Location:index.php');
-                if(isset($_POST["action"]))
-                    moveStock($_POST["idShop1"], $_POST["idShop2"], $_POST["idProduct"], $_POST["currentUnits"], $_POST["unitsToMove"]);    
+                if(isset($_POST["action"])){
+                    moveStock($_POST["idShop1"], $_POST["idShop2"], $_POST["idProduct"], $_POST["currentUnits"], $_POST["unitsToMove"]);
+                    header("Location: " . basename($_SERVER['REQUEST_URI']));
+                }    
                 ?>  
         <div class="container">  
             <div class="d-flex justify-content-between align-items-center p-3">
@@ -30,9 +32,15 @@
                 </div>
                 <!-- Access to the Perfil Conf -->
                 <div class="d-flex align-items-center">
-                    <p class="m-0 font-monospace"><b><?php echo $_SESSION["validated"]?></b></p>
+                        <?php if($_SESSION['username'] != ""){?>
+                            <p class="m-0 font-monospace"><b><?php echo $_SESSION["username"]?></b></p>
+                    <?php }else{?>
+                        <p class="m-0 font-monospace"><b><?php echo $_SESSION["validated"]?></b></p>
+                    <?php }?>
                     <form method="POST" action="profile.php">
-                        <input type="hidden" name="page" value="<?php basename($_SERVER['REQUEST_URI']);?>">
+                        <input type="hidden" name="page" value="<?php echo basename($_SERVER['REQUEST_URI']);?>">
+                        <?php if(isset($_POST['idProduct'])){?> <input type="hidden" name="idProduct" value="<?php echo $_POST['idProduct']?>"><?php }?>
+                        <?php if(isset($_POST['name'])){?> <input type="hidden" name="name" value="<?php echo $_POST['name']?>"><?php }?>
                         <button type="submit" class="mx-2 btn btn-sm btn-secondary"><i class='bi bi-gear-fill'></i></button>
                     </form>
                 </div>

@@ -2,13 +2,12 @@
     <?php 
         if(isset($_POST['user'])){
             global $connection;
-            $result = $connection -> query("SELECT colorfondo, tipoletra from usuarios WHERE usuario='" . $_POST['user'] . "' AND clave='" . hash('sha256', $_POST['pass']) . "'");
+            $result = $connection -> query("SELECT * from usuarios WHERE usuario='" . $_POST['user'] . "' AND clave='" . hash('sha256', $_POST['pass']) . "'");
                 
             if($result -> rowCount() == 0){
                 setLogInCookies(array($_POST['user'], $_POST['pass']));
                 header("Location: " . parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) . "?error=true");
             }else{
-                $_SESSION["validated"] = $_POST['user'];
                 successfulAccess($result -> fetch(PDO::FETCH_OBJ));
                 header("Location: " . parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH));
             }    

@@ -19,15 +19,15 @@
         <?php }
             if(!isset($_SESSION["validated"])) include 'scripts/login.php';
             else{
-                $action = array_key_exists('action', $_POST) ? $_POST['action'] : "";
-                $id = array_key_exists('id', $_POST) ? $_POST['id'] : "";
-                $name = readUserNameFromDB();
+                $name = $_SESSION['username'];
+                $email = $_SESSION['email'];
                 $font = $_SESSION['font'];
                 $backgroundColor = $_SESSION['backgroundColor'];
-                if(isset($_POST['name'])) {
+                if(isset($_POST['username'])) {
                     $_SESSION['backgroundColor'] = $_POST['backgroundColor'];
                     $_SESSION['font'] = $_POST['font'];
-                    updateUser($_POST['name'], $_POST['backgroundColor'], $_POST['font']);
+                    $_SESSION['email'] = $_POST['email'];
+                    updateUser($_POST['pass'], $_POST['name'], $_POST['email'], $_POST['backgroundColor'], $_POST['font']);
                     header("Location: " . parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH));
                 }
         ?>
@@ -36,7 +36,15 @@
             <!-- Button Return -->
             <div class="row" style="margin-bottom: 15px;">
                 <div class="col-12">
-                    <form method="POST" action="index.php">
+                    <form method="POST" action="<?php echo $_POST['page'];?>">
+                        <?php if(isset($_POST['action'])){?> <input type="hidden" name="action" value="<?php echo $_POST['action'];?>"><?php }?>
+                        <?php if(isset($_POST['id'])){?> <input type="hidden" name="id" value="<?php echo $_POST['id'];?>"><?php }?>
+                        <?php if(isset($_POST['name'])){?> <input type="hidden" name="name" value="<?php echo $_POST['name'];?>"><?php }?>
+                        <?php if(isset($_POST['initials'])){?> <input type="hidden" name="initials" value="<?php echo $_POST['initials'];?>"><?php }?>
+                        <?php if(isset($_POST['description'])){?> <input type="hidden" name="description" value="<?php echo $_POST['description'];?>"><?php }?>
+                        <?php if(isset($_POST['retail'])){?> <input type="hidden" name="retail" value="<?php echo $_POST['retail'];?>"><?php }?>
+                        <?php if(isset($_POST['type'])){?> <input type="hidden" name="type" value="<?php echo $_POST['type'];?>"><?php }?>
+                        <?php if(isset($_POST['idProduct'])){?> <input type="hidden" name="idProduct" value="<?php echo $_POST['idProduct']?>"><?php }?>
                         <div class="d-grid gap-2">
                             <button class="btn btn-secondary" type="submit">Volver</button>
                         </div>
@@ -50,15 +58,18 @@
             </div>
             <div class="row">
                 <form method="POST" action="profile.php">
-                    <input type="hidden" name="page" value="<?php echo $page; ?>">
-                    <?php if ($action != "") { ?>
-                    <input type="hidden" name="action" value="<?php echo $action; ?>">
-                    <input type="hidden" name="id" value="<?php echo $id; ?>">
-                    <?php } ?>
-
+                    <input type="hidden" name="page" value="<?php echo $POST['page']; ?>">
                     <div class="mb-3">
                         <label for="nombrecompleto" class="form-label">Nombre y Apellidos</label>
-                        <input type='text' class='form-control' name='name' placeholder='Nombre y Apellidos...' value='<?php echo $name?>' maxlength='200' required>
+                        <input type='text' class='form-control' name='username' placeholder='Nombre y Apellidos...' value='<?php echo $name?>' maxlength='200' required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nombrecompleto" class="form-label">Correo</label>
+                        <input type='text' class='form-control' name='email' value='<?php echo $email?>' maxlength='50' required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nombrecompleto" class="form-label">Contraseña</label>
+                        <input type='text' class='form-control' name='pass' placeholder='Contraseña' required>
                     </div>
                     <br><hr><br>
                     <div class="col-6 mx-auto">
@@ -79,6 +90,14 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-center">
+                        <?php if(isset($_POST['action'])){?> <input type="hidden" name="action" value="<?php echo $_POST['action'];?>"><?php }?>
+                        <?php if(isset($_POST['id'])){?> <input type="hidden" name="id" value="<?php echo $_POST['id'];?>"><?php }?>
+                        <?php if(isset($_POST['name'])){?> <input type="hidden" name="name" value="<?php echo $_POST['name'];?>"><?php }?>
+                        <?php if(isset($_POST['initials'])){?> <input type="hidden" name="initials" value="<?php echo $_POST['initials'];?>"><?php }?>
+                        <?php if(isset($_POST['description'])){?> <input type="hidden" name="description" value="<?php echo $_POST['description'];?>"><?php }?>
+                        <?php if(isset($_POST['retail'])){?> <input type="hidden" name="retail" value="<?php echo $_POST['retail'];?>"><?php }?>
+                        <?php if(isset($_POST['type'])){?> <input type="hidden" name="type" value="<?php echo $_POST['type'];?>"><?php }?>
+                        <?php if(isset($_POST['idProduct'])){?> <input type="hidden" name="idProduct" value="<?php echo $_POST['idProduct']?>"><?php }?>
                         <button type="submit" class="col-4 btn btn-primary">Actualizar</button>
                     </div>
                 </form>

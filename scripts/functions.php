@@ -263,27 +263,21 @@
 
     function successfulAccess($record){
         $_SESSION["validated"] = $_POST['user'];
+        $_SESSION["username"] = $record -> nombrecompleto;
+        $_SESSION["email"] = $record -> correo;
         $_SESSION["backgroundColor"] = $record -> colorfondo;
         $_SESSION["font"] = $record -> tipoletra;
         if(isset($_POST["saveState"])) setcookie("saveState", $_POST['user'], strtotime("+1 year"));
 
         date_default_timezone_set('Europe/London');
         setcookie("successfulAccess", date("d/m H:i"), strtotime("+1 year"));
-
     }
 
-    function readUserNameFromDB(){
+    function updateUser($pass, $name, $email, $backgroundColor, $font){
         try{
             global $connection;
-            return $connection -> query("SELECT nombrecompleto FROM usuarios WHERE usuario = '" . $_SESSION['validated'] . "';") -> fetch(PDO::FETCH_OBJ) -> nombrecompleto;
-        }catch(Exception $e){return false;}
-    }
-
-    function updateUser($name, $backgroundColor, $font){
-        try{
-            global $connection;
-            $sentence = $connection -> prepare("UPDATE usuarios SET nombrecompleto = ?, colorfondo = ?, tipoletra = ? WHERE usuario = ?;");
-            $sentence -> execute([$name, $backgroundColor, $font, $_SESSION['validated']]);
+            $sentence = $connection -> prepare("UPDATE usuarios SET contraseña = ?, nombrecompleto = ?, correo = ?, colorfondo = ?, tipoletra = ? WHERE usuario = ?;");
+            $sentence -> execute([hash('sha256', $pass), $name, $email, $backgroundColor, $font, $_SESSION['validated']]);
         }catch(Exception $e){return false;}
     }
 ?>

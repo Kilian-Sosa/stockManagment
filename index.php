@@ -53,9 +53,13 @@
                     </div>
                     <!-- Access to the Perfil Conf -->
                     <div class="d-flex align-items-center">
-                        <p class="m-0 font-monospace"><b><?php echo $_SESSION["validated"]?></b></p>
+                        <?php if($_SESSION['username'] != ""){?>
+                            <p class="m-0 font-monospace"><b><?php echo $_SESSION["username"]?></b></p>
+                        <?php }else{?>
+                            <p class="m-0 font-monospace"><b><?php echo $_SESSION["validated"]?></b></p>
+                        <?php }?>
                         <form method="POST" action="profile.php">
-                            <input type="hidden" name="page" value="<?php basename($_SERVER['REQUEST_URI']);?>">
+                            <input type="hidden" name="page" value="<?php echo basename($_SERVER['REQUEST_URI']);?>">
                             <button type="submit" class="mx-2 btn btn-sm btn-secondary"><i class='bi bi-gear-fill'></i></button>
                         </form>
                     </div>

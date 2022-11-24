@@ -27,9 +27,20 @@
                 </div>
                 <!-- Access to the Perfil Conf -->
                 <div class="d-flex align-items-center">
-                    <p class="m-0 font-monospace"><b><?php echo $_SESSION["validated"]?></b></p>
+                        <?php if($_SESSION['username'] != ""){?>
+                            <p class="m-0 font-monospace"><b><?php echo $_SESSION["username"]?></b></p>
+                    <?php }else{?>
+                        <p class="m-0 font-monospace"><b><?php echo $_SESSION["validated"]?></b></p>
+                    <?php }?>
                     <form method="POST" action="profile.php">
-                        <input type="hidden" name="page" value="<?php basename($_SERVER['REQUEST_URI']);?>">
+                        <input type="hidden" name="page" value="<?php echo basename($_SERVER['REQUEST_URI']);?>">
+                        <input type="hidden" name="action" value="<?php echo $_POST['action'];?>">
+                        <input type="hidden" name="id" value="<?php echo $_POST['id'];?>">
+                        <input type="hidden" name="name" value="<?php echo $_POST['name'];?>">
+                        <input type="hidden" name="initials" value="<?php echo $_POST['initials'];?>">
+                        <?php if(isset($_POST['description'])){?> <input type="hidden" name="description" value="<?php echo $_POST['description'];?>"><?php }?>
+                        <input type="hidden" name="retail" value="<?php echo $_POST['retail'];?>">
+                        <input type="hidden" name="type" value="<?php echo $_POST['type'];?>">
                         <button type="submit" class="mx-2 btn btn-sm btn-secondary"><i class='bi bi-gear-fill'></i></button>
                     </form>
                 </div>
@@ -41,7 +52,7 @@
                 </div>
             </div>
             <br>
-            <!-- Table -->
+            <!-- Specifications -->
             <div class="row">
                 <div class="col-12">
                     <h3><?php echo $_POST["initials"]?></h3>
