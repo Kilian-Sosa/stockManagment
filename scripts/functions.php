@@ -253,13 +253,26 @@
         echo "</select>";
     }
 
-    function setLogInCookies($array){
-        isset($_COOKIE["errorCount"]) ? 
-                setcookie("errorCount", $_COOKIE["errorCount"]++, strtotime("+1 year")):
-                setcookie("errorCount", 1, strtotime("+1 year"));
-        isset($_COOKIE["wrongAccess"]) ? 
-                setcookie("wrongAccess", $_COOKIE["wrongAccess"] . $array[0] . " - " . $array[1] . ", ", strtotime("+1 year")):
-                setcookie("wrongAccess", $array[0] . " - " . $array[1] . ", ", strtotime("+1 year"));
+    function setWrongLogInCookies($array){
+        setcookie(
+            'errorCount',
+            isset($_COOKIE['errorCount']) ? ++$_COOKIE['errorCount'] : 1,
+            strtotime("+1 year")
+          );
+
+        if(isset($_COOKIE["wrongAccess"])){
+            $num = sizeof($_COOKIE['wrongAccess']);
+            setcookie(
+              "wrongAccess[$num]",
+              $array[0] . "-" . hash('sha256', $array[1]),
+              strtotime("+1 year")
+            );
+        }else
+            setcookie(
+              "wrongAccess[0]",
+              $array[0] . "-" . hash('sha256', $array[1]),
+              strtotime("+1 year")
+            );
     }
 
     function successfulAccess($record){

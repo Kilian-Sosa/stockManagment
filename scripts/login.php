@@ -5,7 +5,7 @@
             $result = $connection -> query("SELECT * from usuarios WHERE usuario='" . $_POST['user'] . "' AND clave='" . hash('sha256', $_POST['pass']) . "'");
                 
             if($result -> rowCount() == 0){
-                setLogInCookies(array($_POST['user'], $_POST['pass']));
+                setWrongLogInCookies(array($_POST['user'], $_POST['pass']));
                 header("Location: " . parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) . "?error=true");
             }else{
                 successfulAccess($result -> fetch(PDO::FETCH_OBJ));
