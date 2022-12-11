@@ -230,9 +230,9 @@
         try{
             global $connection;
             $connection -> beginTransaction();
-            $currentUnits == $unitsToMove ? deleteStock($connection, $idProduct, $idShop1) : updateStock($connection, $idProduct, $idShop1, ($currentUnits - $unitsToMove));
+            $currentUnits == $unitsToMove ? deleteStock($idProduct, $idShop1) : updateStock($idProduct, $idShop1, ($currentUnits - $unitsToMove));
             $unitsInShop2 = getCurrentUnits($idProduct, $idShop2);
-            $unitsInShop2 == 0 ? insertStock($connection, $idProduct, $idShop2, $unitsToMove): updateStock($connection, $idProduct, $idShop2, ($unitsInShop2[0] + $unitsToMove));
+            $unitsInShop2 == 0 ? insertStock($idProduct, $idShop2, $unitsToMove): updateStock($idProduct, $idShop2, ($unitsInShop2[0] + $unitsToMove));
             $connection -> commit();?>
 
             <div class="alert alert-success" role="alert">Se ha movido el stock correctamente</div>
@@ -274,11 +274,11 @@
         setcookie("successfulAccess", date("d/m H:i"), strtotime("+1 year"));
     }
 
-    function updateUser($pass, $name, $email, $backgroundColor, $font){
+    function updateUser($name, $email, $backgroundColor, $font){
         try{
             global $connection;
-            $sentence = $connection -> prepare("UPDATE usuarios SET contraseña = ?, nombrecompleto = ?, correo = ?, colorfondo = ?, tipoletra = ? WHERE usuario = ?;");
-            $sentence -> execute([hash('sha256', $pass), $name, $email, $backgroundColor, $font, $_SESSION['validated']]);
+            $sentence = $connection -> prepare("UPDATE usuarios SET nombrecompleto = ?, correo = ?, colorfondo = ?, tipoletra = ? WHERE usuario = ?;");
+            $sentence -> execute([$name, $email, $backgroundColor, $font, $_SESSION['validated']]);
         }catch(Exception $e){return false;}
     }
 ?>

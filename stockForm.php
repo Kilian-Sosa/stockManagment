@@ -20,7 +20,6 @@
                 if(!isset($_POST["idProduct"])) header('Location:index.php');
                 if(isset($_POST["action"])){
                     moveStock($_POST["idShop1"], $_POST["idShop2"], $_POST["idProduct"], $_POST["currentUnits"], $_POST["unitsToMove"]);
-                    header("Location: " . basename($_SERVER['REQUEST_URI']));
                 }    
                 ?>  
         <div class="container">  

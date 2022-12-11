@@ -27,7 +27,7 @@
                     $_SESSION['backgroundColor'] = $_POST['backgroundColor'];
                     $_SESSION['font'] = $_POST['font'];
                     $_SESSION['email'] = $_POST['email'];
-                    updateUser($_POST['pass'], $_POST['name'], $_POST['email'], $_POST['backgroundColor'], $_POST['font']);
+                    updateUser($_POST['name'], $_POST['email'], $_POST['backgroundColor'], $_POST['font']);
                     header("Location: " . parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH));
                 }
         ?>
@@ -66,10 +66,6 @@
                     <div class="mb-3">
                         <label for="nombrecompleto" class="form-label">Correo</label>
                         <input type='text' class='form-control' name='email' value='<?php echo $email?>' maxlength='50' required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="nombrecompleto" class="form-label">Contraseña</label>
-                        <input type='text' class='form-control' name='pass' placeholder='Contraseña' required>
                     </div>
                     <br><hr><br>
                     <div class="col-6 mx-auto">
