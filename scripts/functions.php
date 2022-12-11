@@ -60,7 +60,8 @@
             global $connection;
             $sentence = $connection -> prepare("SELECT * from productos WHERE id = ?");
             $sentence -> execute([$id]);
-            if($sentence -> rowCount() == 0)?> <div class="alert alert-danger" role="alert">No se ha encontrado el ID</div><?php ;
+            if($sentence -> rowCount() == 0){?> <div class="alert alert-danger" role="alert">No se ha encontrado el ID</div><?php }
+            return true;
         }catch(Exception $e){return false;}
     }
 

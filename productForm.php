@@ -82,7 +82,7 @@
             <!-- Form -->
             <div class="row">
                 <div class="col-12">
-                    <form method="POST" action="form.php">
+                    <form method="POST" action="productForm.php">
                         <div class="mb-3">
                             <label for="name" class="form-label">Nombre del Producto</label>
                             <input type="text" class="form-control" name="name" required value="<?php echo $name;?>">

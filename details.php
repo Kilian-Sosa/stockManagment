@@ -66,7 +66,7 @@
             <!-- Button Edit -->
             <div class="row" style="margin-bottom: 15px;">
                 <div class="col-12">
-                    <form method="POST" action="form.php">
+                    <form method="POST" action="productform.php">
                         <input name="action" type="hidden" value="edit">
                         <input name='id' type='hidden' value='<?php echo $_POST["id"]?>?>'>
                         <input name='name' type='hidden' value='<?php echo $_POST["name"]?>'>
