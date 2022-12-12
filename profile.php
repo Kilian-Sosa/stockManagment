@@ -24,10 +24,12 @@
                 $font = $_SESSION['font'];
                 $backgroundColor = $_SESSION['backgroundColor'];
                 if(isset($_POST['username'])) {
+                    $_SESSION['username'] = $_POST['username'];
                     $_SESSION['backgroundColor'] = $_POST['backgroundColor'];
                     $_SESSION['font'] = $_POST['font'];
                     $_SESSION['email'] = $_POST['email'];
-                    updateUser($_POST['name'], $_POST['email'], $_POST['backgroundColor'], $_POST['font']);
+                    $_SESSION['page'] = $_POST['page'];
+                    updateUser($_POST['username'], $_POST['email'], $_POST['backgroundColor'], $_POST['font']);
                     header("Location: " . parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH));
                 }
         ?>
@@ -36,7 +38,7 @@
             <!-- Button Return -->
             <div class="row" style="margin-bottom: 15px;">
                 <div class="col-12">
-                    <form method="POST" action="<?php echo $_POST['page'];?>">
+                    <form method="POST" action="<?php if(isset($_POST['page'])){echo "".$_POST['page'];}else{echo $_SESSION['page'];}?>">
                         <?php if(isset($_POST['action'])){?> <input type="hidden" name="action" value="<?php echo $_POST['action'];?>"><?php }?>
                         <?php if(isset($_POST['id'])){?> <input type="hidden" name="id" value="<?php echo $_POST['id'];?>"><?php }?>
                         <?php if(isset($_POST['name'])){?> <input type="hidden" name="name" value="<?php echo $_POST['name'];?>"><?php }?>
@@ -57,8 +59,8 @@
                 </div>
             </div>
             <div class="row">
-                <form method="POST" action="profile.php">
-                    <input type="hidden" name="page" value="<?php echo $POST['page']; ?>">
+                <form method="POST" action="">
+                    <input type="hidden" name="page" value='<?php if(isset($_POST['page'])){echo "".$_POST['page'];}else{echo $_SESSION['page'];}?>'>
                     <div class="mb-3">
                         <label for="nombrecompleto" class="form-label">Nombre y Apellidos</label>
                         <input type='text' class='form-control' name='username' placeholder='Nombre y Apellidos...' value='<?php echo $name?>' maxlength='200' required>
